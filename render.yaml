@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: rate-limit-api
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CORS_ORIGIN
+        sync: false        # set this manually after you get the Vercel URL
+      - key: DB_PATH
+        value: ./requests.db

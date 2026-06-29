@@ -1,7 +1,8 @@
 const Database = require('better-sqlite3');
 const path = require('path');
 
-const db = new Database(path.join(__dirname, '..', 'requests.db'));
+const dbPath = process.env.DB_PATH || path.join(__dirname, '..', 'requests.db');
+const db = new Database(dbPath);
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS request_logs (
@@ -13,10 +14,14 @@ db.exec(`
   )
 `);
 
-const insertLog = db.prepare(`
+const _insertStmt = db.prepare(`
   INSERT INTO request_logs (user_id, payload, status_code)
   VALUES (@user_id, @payload, @status_code)
 `);
+
+function insertLog(params) {
+  return _insertStmt.run(params);
+}
 
 const ALLOWED_SORT_COLUMNS = new Set(['id', 'user_id', 'payload', 'status_code', 'created_at']);
 
